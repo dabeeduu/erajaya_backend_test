@@ -3,6 +3,9 @@ package app
 import (
 	"backend_golang/config"
 	"backend_golang/database"
+	"backend_golang/internal/handler"
+	"backend_golang/internal/repository"
+	"backend_golang/internal/usecase"
 	"context"
 	"database/sql"
 	"net/http"
@@ -32,10 +35,13 @@ func (a *App) initRoutes(r *gin.Engine, db *sql.DB) {
 	api := r.Group("/api")
 
 	// Create Product Layer
+	productRepo := repository.NewProductRepo(db)
+	productUsecase := usecase.NewProductUsecase(productRepo)
+	productHandler := handler.NewProductHandler(productUsecase)
 	// Create Product Routes
 	product := api.Group("/product")
 	{
-		product.GET("")
+		product.GET("", productHandler.ListAllProduct)
 	}
 }
 
@@ -43,7 +49,7 @@ func (a *App) serve(r *gin.Engine) {
 
 	srv := &http.Server{
 		Addr:    ":" + a.cfg.ServerPort,
-		Handler: r.Handler(),
+		Handler: r,
 	}
 
 	go func() {
