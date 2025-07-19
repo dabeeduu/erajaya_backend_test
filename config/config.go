@@ -2,13 +2,15 @@ package config
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	ServerPort  string
-	DatabaseURL string
+	ServerPort   string
+	DatabaseURL  string
+	ShutdownTime int
 }
 
 func LoadEnvConfig() (Config, error) {
@@ -16,9 +18,15 @@ func LoadEnvConfig() (Config, error) {
 		return Config{}, err
 	}
 
+	st, err := strconv.Atoi(os.Getenv("SHUTDOWN_TIME_SEC"))
+	if err != nil {
+		return Config{}, err
+	}
+
 	config := Config{
-		ServerPort:  os.Getenv("APP_PORT"),
-		DatabaseURL: os.Getenv("DATABASE_URL"),
+		ServerPort:   os.Getenv("APP_PORT"),
+		DatabaseURL:  os.Getenv("DATABASE_URL"),
+		ShutdownTime: st,
 	}
 
 	return config, nil
