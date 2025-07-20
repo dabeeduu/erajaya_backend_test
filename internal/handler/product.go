@@ -5,7 +5,7 @@ import (
 	"backend_golang/internal/entity"
 	"backend_golang/internal/usecase"
 	"backend_golang/utils"
-	"log"
+	"backend_golang/utils/customerror"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +25,7 @@ func (h *productHandler) ListAllProduct(c *gin.Context) {
 	var f entity.ProductFilter
 	products, err := h.productUsecase.GetAllProduct(c.Request.Context(), f)
 	if err != nil {
-		log.Println(err)
+		c.Error(customerror.NewWithLastCustomError(customerror.ERRPRODHANDLERLISTALLPROD, err))
 		return
 	}
 
@@ -42,5 +42,4 @@ func (h *productHandler) ListAllProduct(c *gin.Context) {
 	}
 
 	utils.ResponseJSON(c, true, "successful", datas, nil, http.StatusOK)
-
 }

@@ -17,13 +17,22 @@ func Logger(log *logrus.Logger) gin.HandlerFunc {
 		latency := time.Since(start)
 		statusCode := c.Writer.Status()
 
-		log.WithFields(logrus.Fields{
+		fields := logrus.Fields{
 			"status_code": statusCode,
 			"method":      c.Request.Method,
 			"latency":     latency,
-			"path":        c.Request.URL,
+			"path":        c.Request.URL.Path,
 			"ip":          c.ClientIP(),
-		}).Info("Incoming request")
+		}
+
+		switch {
+		case statusCode >= 500:
+			log.WithFields(fields).Error("Server error")
+		case statusCode >= 400:
+			log.WithFields(fields).Warn("Client error")
+		default:
+			log.WithFields(fields).Info("Successful request")
+		}
 
 	}
 }

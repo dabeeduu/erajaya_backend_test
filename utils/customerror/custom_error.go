@@ -5,7 +5,11 @@ import (
 	"net/http"
 )
 
-const ()
+const (
+	ERRPRODREPOGETALLPROD     = "311GETALLPROD"
+	ERRPRODUSECASEGETALLPROD  = "210GETALLPROD"
+	ERRPRODHANDLERLISTALLPROD = "110LISTALLPROD"
+)
 
 type CustomError struct {
 	Code    string

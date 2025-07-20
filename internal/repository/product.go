@@ -2,6 +2,8 @@ package repository
 
 import (
 	"backend_golang/internal/entity"
+	"backend_golang/utils/customerror"
+	"backend_golang/utils/errormessage"
 	"context"
 	"database/sql"
 )
@@ -37,7 +39,7 @@ func (r *productRepoImpl) GetAllProduct(ctx context.Context, f entity.ProductFil
 
 	rows, err := db.QueryContext(ctx, q)
 	if err != nil {
-		return nil, err
+		return nil, customerror.New(customerror.ERRPRODREPOGETALLPROD, errormessage.ErrorFailToQuery, err)
 	}
 	defer rows.Close()
 
@@ -51,7 +53,7 @@ func (r *productRepoImpl) GetAllProduct(ctx context.Context, f entity.ProductFil
 			&p.Description,
 			&p.Quantity,
 		); err != nil {
-			return nil, err
+			return nil, customerror.New(customerror.ERRPRODREPOGETALLPROD, errormessage.ErrorFailToScanRows, err)
 		}
 		products = append(products, p)
 	}

@@ -32,7 +32,6 @@ func New(cfg config.Config, logger *logrus.Logger) *App {
 }
 
 func (a *App) initRoutes(r *gin.Engine, db *sql.DB) {
-	// Create Transactor
 	api := r.Group("/api")
 
 	// Create Product Layer
@@ -88,8 +87,10 @@ func (a *App) Run() {
 	defer db.Close()
 
 	r := gin.New()
+	r.ContextWithFallback = true
 	r.Use(gin.Recovery())
 	r.Use(middleware.Logger(a.log))
+	r.Use(middleware.ErrorMiddleware(a.log))
 
 	a.initRoutes(r, db)
 	a.serve(r)
