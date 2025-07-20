@@ -10,7 +10,7 @@ type GetProductResponse struct {
 
 type AddProductRequest struct {
 	Name        string `json:"name" binding:"required,notblank"`
-	Price       int    `json:"price" binding:"required,gt=0"`
+	Price       int    `json:"price" binding:"gt=0"`
 	Description string `json:"description" binding:"required,notblank"`
-	Quantity    int    `json:"quantity" binding:"required,gte=0"`
+	Quantity    int    `json:"quantity" binding:"gte=0"`
 }
