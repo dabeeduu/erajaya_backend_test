@@ -1,6 +1,8 @@
 package entity
 
 type ProductFilter struct {
+	SortBy    string
+	SortOrder string
 }
 
 type Product struct {

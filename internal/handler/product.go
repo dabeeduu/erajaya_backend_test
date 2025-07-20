@@ -23,7 +23,20 @@ func NewProductHandler(productUsecase usecase.ProductUsecase) *productHandler {
 }
 
 func (h *productHandler) ListAllProduct(c *gin.Context) {
+	var filterDTO dto.GetProductFilter
+	if err := c.ShouldBindQuery(&filterDTO); err != nil {
+		c.Error(customerror.New(customerror.ERRPRODHANDLERLISTALLPRODBIND, errormessage.ErrorInvalidQueryParam, err))
+		return
+	}
+
 	var f entity.ProductFilter
+	if filterDTO.SortBy != nil {
+		f.SortBy = *filterDTO.SortBy
+	}
+	if filterDTO.SortOrder != nil {
+		f.SortOrder = *filterDTO.SortOrder
+	}
+
 	products, err := h.productUsecase.GetAllProduct(c.Request.Context(), f)
 	if err != nil {
 		c.Error(customerror.NewWithLastCustomError(customerror.ERRPRODHANDLERLISTALLPROD, err))

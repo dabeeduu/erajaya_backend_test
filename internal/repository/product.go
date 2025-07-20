@@ -7,6 +7,8 @@ import (
 	"backend_golang/utils/errormessage"
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 )
 
 type ProductRepo interface {
@@ -24,8 +26,22 @@ func NewProductRepo(db *sql.DB) *productRepoImpl {
 	}
 }
 
+func buildProductFilter(f entity.ProductFilter) string {
+	col := "id"
+	if f.SortBy != "" {
+		col = f.SortBy
+	}
+
+	order := "ASC"
+	if strings.ToLower(f.SortOrder) == "desc" {
+		order = "DESC"
+	}
+
+	return fmt.Sprintf("ORDER BY %s %s", col, order)
+}
+
 func (r *productRepoImpl) GetAllProduct(ctx context.Context, f entity.ProductFilter) ([]entity.Product, error) {
-	q := `
+	baseQ := `
 	SELECT
 		id,
 		name,
@@ -34,8 +50,10 @@ func (r *productRepoImpl) GetAllProduct(ctx context.Context, f entity.ProductFil
 		quantity
 	FROM
 		products
-	;
 	`
+
+	orderBy := buildProductFilter(f)
+	q := fmt.Sprintf("%s %s;", baseQ, orderBy)
 
 	db := utils.ChooseDB(ctx, r.db)
 

@@ -1,5 +1,10 @@
 package dto
 
+type GetProductFilter struct {
+	SortBy    *string `form:"sort_by" binding:"omitempty,oneof=price name created_at"`
+	SortOrder *string `form:"sort_order" binding:"omitempty,oneof=asc desc"`
+}
+
 type GetProductResponse struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
