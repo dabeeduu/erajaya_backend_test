@@ -6,6 +6,7 @@ import (
 	"backend_golang/internal/usecase"
 	"backend_golang/utils"
 	"backend_golang/utils/customerror"
+	"backend_golang/utils/errormessage"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -42,4 +43,27 @@ func (h *productHandler) ListAllProduct(c *gin.Context) {
 	}
 
 	utils.ResponseJSON(c, true, "successful", datas, nil, http.StatusOK)
+}
+
+func (h *productHandler) AddProduct(c *gin.Context) {
+	var req dto.AddProductRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.Error(customerror.New(customerror.ERRPRODHANDLERADDPRODBIND, errormessage.ErrorInvalidBody, err))
+		return
+	}
+
+	product := entity.Product{
+		Name:        req.Name,
+		Price:       req.Price,
+		Description: req.Description,
+		Quantity:    req.Quantity,
+	}
+
+	if err := h.productUsecase.AddProduct(c.Request.Context(), product); err != nil {
+		c.Error(customerror.NewWithLastCustomError(customerror.ERRPRODHANDLERADDPROD, err))
+		return
+	}
+
+	utils.ResponseJSON(c, true, "product added succesfully", nil, nil, http.StatusCreated)
 }

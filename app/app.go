@@ -42,6 +42,7 @@ func (a *App) initRoutes(r *gin.Engine, db *sql.DB) {
 	product := api.Group("/product")
 	{
 		product.GET("", productHandler.ListAllProduct)
+		product.POST("", productHandler.AddProduct)
 	}
 }
 

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"backend_golang/internal/entity"
+	"backend_golang/utils"
 	"backend_golang/utils/customerror"
 	"backend_golang/utils/errormessage"
 	"context"
@@ -10,6 +11,7 @@ import (
 
 type ProductRepo interface {
 	GetAllProduct(ctx context.Context, f entity.ProductFilter) ([]entity.Product, error)
+	InsertProduct(ctx context.Context, p entity.Product) error
 }
 
 type productRepoImpl struct {
@@ -35,7 +37,7 @@ func (r *productRepoImpl) GetAllProduct(ctx context.Context, f entity.ProductFil
 	;
 	`
 
-	db := r.db
+	db := utils.ChooseDB(ctx, r.db)
 
 	rows, err := db.QueryContext(ctx, q)
 	if err != nil {
@@ -59,4 +61,32 @@ func (r *productRepoImpl) GetAllProduct(ctx context.Context, f entity.ProductFil
 	}
 
 	return products, nil
+}
+
+func (r *productRepoImpl) InsertProduct(ctx context.Context, p entity.Product) error {
+
+	q := `
+	INSERT INTO
+		products
+		(name, price, description, quantity)
+	VALUES
+		($1, $2, $3, $4)
+	;
+	`
+
+	db := utils.ChooseDB(ctx, r.db)
+
+	res, err := db.ExecContext(ctx, q, p.Name, p.Price, p.Description, p.Quantity)
+	if err != nil {
+		return customerror.New(customerror.ERRPRODREPOINPROD, errormessage.ErrorFailToExecQuery, err)
+	}
+	numRowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return customerror.New(customerror.ERRPRODREPOINPROD, errormessage.ErrorFailToGetRowsAffected, err)
+	}
+	if numRowsAffected == 0 {
+		return customerror.New(customerror.ERRPRODREPOINPROD, errormessage.ErrorNoRowsAffected, err)
+	}
+
+	return nil
 }
