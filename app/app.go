@@ -6,6 +6,7 @@ import (
 	"backend_golang/internal/handler"
 	"backend_golang/internal/repository"
 	"backend_golang/internal/usecase"
+	"backend_golang/middleware"
 	"context"
 	"database/sql"
 	"net/http"
@@ -88,8 +89,8 @@ func (a *App) Run() {
 
 	r := gin.New()
 	r.Use(gin.Recovery())
+	r.Use(middleware.Logger(a.log))
 
 	a.initRoutes(r, db)
-
 	a.serve(r)
 }
