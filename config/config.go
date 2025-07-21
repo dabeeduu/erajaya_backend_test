@@ -11,6 +11,7 @@ type Config struct {
 	ServerPort   string
 	DatabaseURL  string
 	ShutdownTime int
+	RedisAddr    string
 }
 
 func LoadEnvConfig() (Config, error) {
@@ -26,6 +27,7 @@ func LoadEnvConfig() (Config, error) {
 	config := Config{
 		ServerPort:   os.Getenv("APP_PORT"),
 		DatabaseURL:  os.Getenv("DATABASE_URL"),
+		RedisAddr:    os.Getenv("REDIS_ADDR"),
 		ShutdownTime: st,
 	}
 

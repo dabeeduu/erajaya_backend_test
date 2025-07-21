@@ -3,6 +3,7 @@ package app
 import (
 	"backend_golang/config"
 	"backend_golang/database"
+	"backend_golang/internal/cache"
 	"backend_golang/internal/handler"
 	"backend_golang/internal/repository"
 	"backend_golang/internal/usecase"
@@ -16,6 +17,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 )
 
@@ -31,12 +33,13 @@ func New(cfg config.Config, logger *logrus.Logger) *App {
 	}
 }
 
-func (a *App) initRoutes(r *gin.Engine, db *sql.DB) {
+func (a *App) initRoutes(r *gin.Engine, db *sql.DB, redis *redis.Client) {
 	api := r.Group("/api")
 
 	// Create Product Layer
 	productRepo := repository.NewProductRepo(db)
-	productUsecase := usecase.NewProductUsecase(productRepo)
+	productCache := cache.NewProductCache(redis)
+	productUsecase := usecase.NewProductUsecase(productRepo, productCache)
 	productHandler := handler.NewProductHandler(productUsecase)
 	// Create Product Routes
 	product := api.Group("/product")
@@ -87,12 +90,18 @@ func (a *App) Run() {
 	}
 	defer db.Close()
 
+	redisClient, err := database.ConnectRedis(a.cfg)
+	if err != nil {
+		a.log.WithField("error", err).Fatal("Unable to connect to Redis")
+	}
+	defer redisClient.Close()
+
 	r := gin.New()
 	r.ContextWithFallback = true
 	r.Use(gin.Recovery())
 	r.Use(middleware.Logger(a.log))
 	r.Use(middleware.ErrorMiddleware(a.log))
 
-	a.initRoutes(r, db)
+	a.initRoutes(r, db, redisClient)
 	a.serve(r)
 }
