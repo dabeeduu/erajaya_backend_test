@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    image: dabeeduu/erajaya_backend_test:latest
     container_name: my-go-app
     ports:
       - "${APP_PORT}:8000"
