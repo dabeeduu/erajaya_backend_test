@@ -29,7 +29,7 @@ func NewProductUsecase(productRepo repository.ProductRepo, cache cache.ProductCa
 func (u *productUsecaseImpl) GetAllProduct(ctx context.Context, f entity.ProductFilter) ([]entity.Product, error) {
 	version, err := u.productCache.GetVersion(ctx)
 	if err != nil {
-		version = "1"
+		version = "0"
 	}
 
 	products, err := u.productCache.GetAll(ctx, version, f.SortBy, f.SortOrder)

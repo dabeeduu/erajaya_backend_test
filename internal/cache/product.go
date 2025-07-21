@@ -36,7 +36,7 @@ func (c *productCache) buildKey(version, sortBy, sortOrder string) string {
 func (c *productCache) GetVersion(ctx context.Context) (string, error) {
 	version, err := c.redis.Get(ctx, "products:cache:version").Result()
 	if err == redis.Nil {
-		return "1", nil
+		return "0", nil
 	}
 	return version, err
 }
