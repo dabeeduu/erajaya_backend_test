@@ -179,6 +179,6 @@ API is accessible at: [http://localhost:8000](http://localhost:8000)
 | GET    | `/api/products`        | List all product  |
 | POST   | `/api/products`        | Add new product  |
 
-### 🔎 Dokumentasi API (Postman)
+### 🔎 API Documentation (Postman)
 
 👉 [API Documentation (Postman)](https://documenter.getpostman.com/view/46907087/2sB34kFfCU#a6d1b779-eed1-404f-b0c3-6b990be04159)
