@@ -75,11 +75,12 @@ A simple product API built in Go for Erajaya backend test, using PostgreSQL, Red
 └── README.md
 ```
 
-
 ## ⚙️ Tech Stack
 
 - **Language**: Go 1.24.5
-- **Web Framework**: `net/http` (standard library)
+- **Framework**: [Gin](https://github.com/gin-gonic/gin) - Web framework
+- **Validation**: [go-playground/validator](https://github.com/go-playground/validator)
+- **Logging**: [logrus](https://github.com/sirupsen/logrus)
 - **Database**: PostgreSQL 15 (via Docker)
 - **Cache**: Redis 7 (via Docker)
 - **Migration Tool**: [migrate/migrate](https://hub.docker.com/r/migrate/migrate)
@@ -100,6 +101,26 @@ A simple product API built in Go for Erajaya backend test, using PostgreSQL, Red
 ## 🧱 Design and Architecture
 
 The project uses a **Clean Architecture** approach with a **layered** structure that is divided into several main layers:
+
+```mermaid
+graph TD
+  Client[Client Postman, Browser, etc]
+  API[API Layer Gin]
+  Handler[Handler]
+  UseCase[Use Case]
+  Repo[Repository Layer]
+  DB[(PostgreSQL)]
+  Redis[(Redis)]
+
+  Client --> API
+  API --> Handler
+  Handler --> UseCase
+  UseCase --> Repo
+  Repo --> DB
+  UseCase --> Redis
+
+```
+
 ### 📌 Layering:
 
 ```
