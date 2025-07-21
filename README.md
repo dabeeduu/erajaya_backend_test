@@ -131,7 +131,7 @@ SHUTDOWN_TIME_SEC=3
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/erajaya_backend_test.git
+git clone https://github.com/dabeeduu/erajaya_backend_test.git
 cd erajaya_backend_test
 ```
 
