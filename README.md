@@ -165,7 +165,7 @@ cp .env.example .env
 ### 3. Run with Docker
 
 ```bash
-docker compose up --build
+docker compose pull && docker compose up
 ```
 
 API is accessible at: [http://localhost:8000](http://localhost:8000)
